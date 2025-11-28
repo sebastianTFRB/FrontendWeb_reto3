@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
+
+@layer base {
+  :root {
+    font-family: 'Space Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    background-color: #0b0c12;
+    color: #e2e8f0;
+  }
+
+  * {
+    @apply antialiased;
+  }
+
+  body {
+    @apply min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-50;
+  }
+
+  ::selection {
+    @apply bg-indigo-500/40 text-white;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply border border-white/10 bg-white/5 backdrop-blur;
+  }
+}
