@@ -143,9 +143,9 @@ export const ChatbotPage = () => {
       <div className="grid gap-4 lg:grid-cols-3">
         <Card title="Chat" className="lg:col-span-2">
           {property ? (
-            <div className="mb-3 flex items-center justify-between rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-50">
+            <div className="mb-3 flex items-center justify-between rounded-xl border border-red-600/30 bg-red-600/10 px-3 py-2 text-xs text-red-50">
               <span>Trabajando sobre: {property.title}</span>
-              <span className="text-emerald-200">{property.location ?? 'Sin zona'}</span>
+              <span className="text-red-200">{property.location ?? 'Sin zona'}</span>
             </div>
           ) : null}
           {propertyError ? <p className="text-xs text-amber-200">{propertyError}</p> : null}
@@ -156,7 +156,7 @@ export const ChatbotPage = () => {
                 className={`max-w-[80%] rounded-xl px-3 py-2 text-sm ${
                   m.from === 'bot'
                     ? 'self-start bg-white/5 text-slate-100'
-                    : 'self-end bg-gradient-to-r from-pink-600 to-purple-600 text-white'
+                    : 'self-end bg-gradient-to-r from-red-600 via-red-700 to-red-500 text-white shadow shadow-red-900/20'
                 }`}
               >
                 {m.text}
@@ -168,7 +168,7 @@ export const ChatbotPage = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={nextPrompt || 'Escribe tu respuesta'}
-              className="flex-1 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+              className="flex-1 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   e.preventDefault()
@@ -179,7 +179,7 @@ export const ChatbotPage = () => {
             <button
               onClick={sendMessage}
               disabled={saving}
-              className="rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow shadow-pink-500/30 transition hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60"
+              className="rounded-xl bg-gradient-to-r from-red-600 via-red-700 to-red-500 px-4 py-2 text-sm font-semibold text-white shadow shadow-red-900/30 transition hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60"
             >
               Enviar
             </button>

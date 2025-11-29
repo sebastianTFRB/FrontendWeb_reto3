@@ -9,7 +9,10 @@ export const NotFoundPage = () => {
         No pudimos encontrar la pantalla que buscas. Vuelve al dashboard para
         seguir monitoreando el agente de leads.
       </p>
-      <Link to="/app/dashboard" className="rounded-full bg-pink-600 px-4 py-2 text-sm font-semibold text-white shadow shadow-pink-500/30 transition hover:-translate-y-0.5 hover:shadow-lg">
+      <Link
+        to="/app/dashboard"
+        className="rounded-full bg-gradient-to-r from-red-600 via-red-700 to-red-500 px-4 py-2 text-sm font-semibold text-white shadow shadow-red-900/30 transition hover:-translate-y-0.5 hover:shadow-lg"
+      >
         Ir al dashboard
       </Link>
     </div>

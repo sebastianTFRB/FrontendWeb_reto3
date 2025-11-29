@@ -62,7 +62,7 @@ export const AgentInsightsPage = () => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Pega aqui el mensaje del lead"
-              className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-white outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+              className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
               rows={5}
             />
             <div className="grid gap-3 md:grid-cols-3">
@@ -70,26 +70,26 @@ export const AgentInsightsPage = () => {
                 value={canal}
                 onChange={(e) => setCanal(e.target.value)}
                 placeholder="Canal (whatsapp, web...)"
-                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
               />
               <input
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
                 placeholder="Nombre del lead"
-                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
               />
               <input
                 value={contacto}
                 onChange={(e) => setContacto(e.target.value)}
                 placeholder="Contacto (email/telefono)"
-                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
               />
             </div>
             {error ? <p className="text-sm text-amber-200">{error}</p> : null}
             <button
               type="button"
               onClick={handleAnalyze}
-              className="w-full rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow shadow-pink-500/30 transition hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60"
+              className="w-full rounded-xl bg-gradient-to-r from-red-600 via-red-700 to-red-500 px-4 py-2 text-sm font-semibold text-white shadow shadow-red-900/30 transition hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60"
               disabled={loading}
             >
               {loading ? 'Analizando…' : 'Analizar'}

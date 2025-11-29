@@ -91,7 +91,7 @@ export const LeadsPage = () => {
                 onClick={() => setFilter(option)}
                 className={`rounded-full px-3 py-1 text-sm font-semibold transition ${
                   filter === option
-                    ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white shadow shadow-pink-500/30'
+                    ? 'bg-gradient-to-r from-red-600 to-red-700 text-white shadow shadow-red-900/30'
                     : 'bg-white/5 text-slate-200 hover:bg-white/10'
                 }`}
               >

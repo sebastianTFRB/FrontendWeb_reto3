@@ -45,51 +45,36 @@ export const AppLayout = () => {
   }
 
   return (
-    <div
-      className={`relative min-h-screen ${
-        isAgency
-          ? 'bg-gradient-to-br from-slate-950 via-black to-slate-950'
-          : 'bg-gradient-to-br from-black-950 via-slate-950 to-red'
-      } text-slate-50`}
-    >
+    <div className="relative min-h-screen bg-gradient-to-br from-black via-slate-950 to-black text-slate-50">
+      {/* Capas decorativas */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div
-          className={`absolute -top-48 -left-32 h-72 w-72 rounded-full ${
-            isAgency ? 'bg-red-600/15' : 'bg-red-500/20'
-          } blur-3xl`}
-        />
-        <div
-          className={`absolute -bottom-48 -right-24 h-80 w-80 rounded-full ${
-            isAgency ? 'bg-red-600/12' : 'bg-red-500/15'
-          } blur-3xl`}
-        />
-        <div className="absolute top-1/3 right-1/4 h-96 w-96 rounded-full bg-white/5 blur-3xl" />
+        <div className="absolute -top-40 -left-28 h-80 w-80 rounded-full bg-red-600/25 blur-3xl" />
+        <div className="absolute -bottom-52 -right-24 h-96 w-96 rounded-full bg-red-700/20 blur-3xl" />
+        <div className="absolute top-1/3 left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-white/5 blur-3xl" />
+        <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-red-700/20 via-transparent to-transparent" />
       </div>
-      <div className="relative mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 lg:flex-row">
-        <aside
-          className={`w-full rounded-2xl border ${
-            isAgency ? 'border-red-600/30' : 'border-red-500/30'
-          } bg-black/40 p-4 backdrop-blur lg:w-72 lg:self-start`}
-        >
-          <div
-            className={`flex items-center gap-3 rounded-xl border ${
-              isAgency ? 'border-red-600/30 bg-gradient-to-r from-red-700/30 to-red-500/20' : 'border-red-500/30 bg-gradient-to-r from-red-700/30 to-black-500/20'
-            } px-4 py-3 shadow-lg ${isAgency ? 'shadow-red-900/30' : 'shadow-red-900/30'}`}
-          >
-            <div
-              className={`rounded-full ${isAgency ? 'bg-red-600/30 text-red-200' : 'bg-red-500/30 text-red-100'} p-2`}
-            >
-              <SparklesIcon />
+
+      <div className="relative mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 lg:flex-row lg:px-6">
+        <aside className="w-full rounded-2xl border border-red-600/30 bg-black/60 p-5 shadow-2xl shadow-red-900/20 backdrop-blur lg:w-72 lg:self-start">
+          <div className="flex items-center justify-between gap-2 rounded-xl border border-red-600/30 bg-gradient-to-r from-red-700/30 via-black/60 to-red-800/30 px-4 py-3 shadow-lg shadow-red-900/30">
+            <div className="flex items-center gap-3">
+              <div className="rounded-full bg-red-600/40 p-2 text-red-100">
+                <SparklesIcon />
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-red-200">Full House</p>
+                <p className="text-sm font-semibold text-white">
+                  {isAgency ? 'Panel Agencia' : 'Explorador de Compras'}
+                </p>
+                {user ? <p className="text-xs text-slate-300">{user.email}</p> : null}
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-300">Full House</p>
-              <p className="font-semibold text-white">
-                {isAgency ? 'Panel Agencia' : 'Explorador de Compras'}
-              </p>
-              {user ? <p className="text-xs text-gray-300">{user.email}</p> : null}
+            <div className="rounded-full bg-white/10 px-3 py-1 text-[10px] font-semibold text-slate-200">
+              Live
             </div>
           </div>
-          <nav className="mt-6 flex flex-col gap-1">
+
+          <nav className="mt-6 space-y-2">
             {(isAgency
               ? ([
                   { label: 'Dashboard', to: '/app/dashboard', icon: <Target className="h-4 w-4" /> },
@@ -107,45 +92,45 @@ export const AppLayout = () => {
                 to={item.to}
                 className={({ isActive }) =>
                   [
-                    'flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-all',
+                    'flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-semibold transition-all duration-200',
                     isActive
-                      ? isAgency
-                        ? 'bg-gradient-to-r from-red-600/30 to-black-500/30 text-white shadow shadow-red-900/30'
-                        : 'bg-gradient-to-r from-red-600/30 to-black-500/30 text-white shadow shadow-red-900/30'
-                      : 'text-gray-300 hover:bg-white/5 hover:text-white',
+                      ? 'bg-gradient-to-r from-red-600/30 to-black/40 text-white shadow shadow-red-900/30 ring-1 ring-red-500/50'
+                      : 'text-slate-200 hover:bg-white/5 hover:text-white hover:ring-1 hover:ring-red-500/30',
                   ].join(' ')
                 }
               >
-                {item.icon}
+                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/5 text-red-200">
+                  {item.icon}
+                </div>
                 <span>{item.label}</span>
               </NavLink>
             ))}
           </nav>
+
           <button
             onClick={() => logout()}
-            className={`mt-6 w-full rounded-xl border ${
-              isAgency ? 'border-red-600/30' : 'border-red-500/30'
-            } bg-black/30 px-3 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 ${
-              isAgency ? 'hover:border-red-500 hover:text-red-100' : 'hover:border-red-400 hover:text-red-50'
-            }`}
+            className="mt-6 w-full rounded-xl border border-red-600/30 bg-gradient-to-r from-red-700/40 via-black/40 to-red-700/40 px-3 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:border-red-400 hover:shadow-lg hover:shadow-red-900/30"
           >
             Cerrar sesion
           </button>
-          <div
-            className={`mt-6 rounded-xl border ${
-              isAgency ? 'border-red-600/30 bg-gradient-to-br from-red-700/20 via-red-500/10 to-red-800/20' : 'border-red-500/30 bg-gradient-to-br from-red-700/15 via-black-500/10 to-red-600/20'
-            } p-4`}
-          >
-            <p className="text-sm text-slate-200">{isAgency ? 'Network effect' : 'Listo para comprar'}</p>
-            <p className="text-sm text-slate-400">
+
+          <div className="mt-6 rounded-xl border border-red-600/30 bg-gradient-to-br from-red-700/25 via-black/40 to-red-800/20 p-4">
+            <p className="text-sm font-semibold text-white">
+              {isAgency ? 'Network effect' : 'Listo para comprar'}
+            </p>
+            <p className="text-sm text-slate-300">
               {isAgency
-                ? 'Mas inmobiliarias y propiedades = mejor clasificacion automatica.'
+                ? 'Más inmobiliarias y propiedades = mejor clasificación automática.'
                 : 'Completa tu perfil y el asesor te sugiere propiedades en minutos.'}
             </p>
           </div>
         </aside>
-        <main className="flex-1">
-          <Outlet />
+
+        <main className="relative flex-1">
+          <div className="absolute -top-6 left-0 right-0 h-12 rounded-2xl bg-gradient-to-r from-red-600/15 via-transparent to-red-600/15 blur-3xl" />
+          <div className="relative rounded-3xl border border-white/5 bg-black/60 p-4 shadow-xl shadow-black/40 backdrop-blur">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>

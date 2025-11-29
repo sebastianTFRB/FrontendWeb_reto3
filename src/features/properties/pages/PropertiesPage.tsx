@@ -357,7 +357,7 @@ export const PropertiesPage = () => {
                 placeholder="Título"
                 value={form.title}
                 onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
-                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-red-500 focus:ring-1 focus:ring-red-500"
               />
 
               <input
@@ -373,21 +373,21 @@ export const PropertiesPage = () => {
                   const n = Math.min(Math.max(Number(v), 0), 1000000000)
                   setForm((p) => ({ ...p, price: String(n) }))
                 }}
-                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-red-500 focus:ring-1 focus:ring-red-500"
               />
 
               <input
                 placeholder="Zona / ciudad"
                 value={form.location}
                 onChange={(e) => setForm((p) => ({ ...p, location: e.target.value }))}
-                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-red-500 focus:ring-1 focus:ring-red-500"
               />
 
               <div className="grid grid-cols-2 gap-2">
                 <select
                   value={form.property_type}
                   onChange={(e) => setForm((p) => ({ ...p, property_type: e.target.value }))}
-                  className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+                  className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-red-500 focus:ring-1 focus:ring-red-500"
                 >
                   <option value="apartamento">Apartamento</option>
                   <option value="casa">Casa</option>
@@ -400,7 +400,7 @@ export const PropertiesPage = () => {
                 <select
                   value={form.status}
                   onChange={(e) => setForm((p) => ({ ...p, status: e.target.value }))}
-                  className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+                  className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-red-500 focus:ring-1 focus:ring-red-500"
                 >
                   <option value="available">Disponible</option>
                   <option value="reserved">Reservada</option>
@@ -421,7 +421,7 @@ export const PropertiesPage = () => {
                     const n = Math.min(Math.max(Number(v), 0), 10)
                     setForm((p) => ({ ...p, bedrooms: String(n) }))
                   }}
-                  className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+                  className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-red-500 focus:ring-1 focus:ring-red-500"
                 />
 
                 <input
@@ -436,7 +436,7 @@ export const PropertiesPage = () => {
                     const n = Math.min(Math.max(Number(v), 0), 8)
                     setForm((p) => ({ ...p, bathrooms: String(n) }))
                   }}
-                  className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+                  className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white focus:border-red-500 focus:ring-1 focus:ring-red-500"
                 />
 
                 <label className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white">
@@ -454,7 +454,7 @@ export const PropertiesPage = () => {
                 value={form.description}
                 rows={3}
                 onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
-                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white resize-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+                className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white resize-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
               />
 
               <div className="space-y-1">
@@ -463,7 +463,7 @@ export const PropertiesPage = () => {
                   multiple
                   accept="image/*"
                   onChange={(e) => setPhotos(Array.from(e.target.files || []))}
-                  className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white file:mr-3 file:rounded-lg file:border-none file:bg-pink-600 file:px-3 file:py-1 file:text-white"
+                  className="w-full rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-sm text-white file:mr-3 file:rounded-lg file:border-none file:bg-red-600 file:px-3 file:py-1 file:text-white"
                 />
                 {photos.length > 0 ? (
                   <p className="text-xs text-slate-300">{photos.length} imagen(es) seleccionadas</p>
@@ -475,7 +475,7 @@ export const PropertiesPage = () => {
               <button
                 type="submit"
                 disabled={saving}
-                className="rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 shadow shadow-pink-500/30 hover:shadow-lg disabled:opacity-60"
+                className="rounded-xl bg-gradient-to-r from-red-600 via-red-700 to-red-500 px-4 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 shadow shadow-red-900/30 hover:shadow-lg disabled:opacity-60"
               >
                 Publicar
               </button>

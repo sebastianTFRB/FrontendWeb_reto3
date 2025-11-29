@@ -4,7 +4,7 @@ const variants = {
   success: 'bg-emerald-500/20 text-emerald-200 border-emerald-500/30',
   warning: 'bg-amber-500/20 text-amber-200 border-amber-500/30',
   danger: 'bg-rose-500/20 text-rose-200 border-rose-500/30',
-  info: 'bg-pink-500/20 text-pink-100 border-pink-500/30',
+  info: 'bg-red-600/20 text-red-100 border-red-500/30',
   neutral: 'bg-white/5 text-slate-100 border-white/10',
 }
 

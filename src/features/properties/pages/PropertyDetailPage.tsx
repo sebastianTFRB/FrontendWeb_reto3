@@ -74,7 +74,7 @@ export const PropertyDetailPage = () => {
             <Badge variant="info">{property.status}</Badge>
             <button
               onClick={() => navigate('/app/properties')}
-              className="rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-white transition hover:border-indigo-400 hover:bg-white/10"
+              className="rounded-xl border border-red-600/30 bg-white/5 px-3 py-2 text-xs font-semibold text-white transition hover:-translate-y-0.5 hover:border-red-400 hover:bg-red-600/10"
             >
               Volver al catálogo
             </button>
@@ -182,7 +182,7 @@ export const PropertyDetailPage = () => {
 
             <button
               onClick={() => navigate(`/app/chat?propertyId=${property.id}`)}
-              className="mt-3 w-full rounded-xl bg-gradient-to-r from-emerald-600 to-cyan-500 px-4 py-2 text-sm font-semibold text-white shadow shadow-emerald-500/30 transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/80 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+              className="mt-3 w-full rounded-xl bg-gradient-to-r from-red-600 via-red-700 to-red-500 px-4 py-2 text-sm font-semibold text-white shadow shadow-red-900/30 transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400/80 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
             >
               Hablar con asesor
             </button>

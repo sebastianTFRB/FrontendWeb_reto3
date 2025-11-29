@@ -58,7 +58,7 @@ export const LeadCaptureForm = ({ onSubmit, loading }: LeadCaptureFormProps) => 
             onChange={(e) => setForm((prev) => ({ ...prev, full_name: e.target.value }))}
             required
             placeholder="Ej. Ana Lopez"
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
           />
         </label>
         <label className="space-y-1 text-sm">
@@ -68,7 +68,7 @@ export const LeadCaptureForm = ({ onSubmit, loading }: LeadCaptureFormProps) => 
             type="email"
             onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
             placeholder="ana@email.com"
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
           />
         </label>
         <label className="space-y-1 text-sm">
@@ -77,7 +77,7 @@ export const LeadCaptureForm = ({ onSubmit, loading }: LeadCaptureFormProps) => 
             value={form.budget}
             type="number"
             onChange={(e) => setForm((prev) => ({ ...prev, budget: e.target.value }))}
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
           />
         </label>
         <label className="space-y-1 text-sm">
@@ -86,7 +86,7 @@ export const LeadCaptureForm = ({ onSubmit, loading }: LeadCaptureFormProps) => 
             value={form.preferred_area}
             onChange={(e) => setForm((prev) => ({ ...prev, preferred_area: e.target.value }))}
             placeholder="CDMX, Polanco, etc."
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
           />
         </label>
         <label className="space-y-1 text-sm">
@@ -95,7 +95,7 @@ export const LeadCaptureForm = ({ onSubmit, loading }: LeadCaptureFormProps) => 
             value={form.phone}
             onChange={(e) => setForm((prev) => ({ ...prev, phone: e.target.value }))}
             placeholder="+57 300 000 0000"
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
           />
         </label>
         <label className="space-y-1 text-sm">
@@ -103,7 +103,7 @@ export const LeadCaptureForm = ({ onSubmit, loading }: LeadCaptureFormProps) => 
           <select
             value={form.urgency}
             onChange={(e) => setForm((prev) => ({ ...prev, urgency: e.target.value as LeadUrgency }))}
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
           >
             <option value="high">Alta (0-30 dias)</option>
             <option value="medium">Media (1-3 meses)</option>
@@ -116,14 +116,14 @@ export const LeadCaptureForm = ({ onSubmit, loading }: LeadCaptureFormProps) => 
             value={form.notes}
             onChange={(e) => setForm((prev) => ({ ...prev, notes: e.target.value }))}
             placeholder="Observaciones, notas rapidas"
-            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white outline-none focus:border-pink-500 focus:ring-1 focus:ring-pink-500"
+            className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
           />
         </label>
       </div>
 
       <button
         type="submit"
-        className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow shadow-pink-500/30 transition hover:-translate-y-0.5 hover:shadow-lg focus:outline-none disabled:opacity-60"
+        className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-red-600 via-red-700 to-red-500 px-4 py-2 text-sm font-semibold text-white shadow shadow-red-900/30 transition hover:-translate-y-0.5 hover:shadow-lg focus:outline-none disabled:opacity-60"
         disabled={loading}
       >
         Crear lead
