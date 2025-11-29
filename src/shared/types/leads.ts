@@ -13,21 +13,16 @@ export type LeadInteraction = {
 
 export type Lead = {
   id: number
-  full_name: string
-  email?: string | null
-  phone?: string | null
-  preferred_area?: string | null
-  budget?: number | null
-  urgency: LeadUrgency
-  notes?: string | null
-  status: string
-  category: LeadCategory
-  preferences?: Record<string, any> | null
-  intent_score: number
-  agency_id?: number | null
-  created_at: string
-  updated_at: string
-  interactions: LeadInteraction[]
+  full_name: string | null
+  email: string | null
+  phone: string | null
+  preferred_area: string | null
+  budget: number | null
+  urgency: string | null
+  category: string | null
+  intent_score: number | null
+  notes: string | null
+  status: string | null
 }
 
 export type LeadCreatePayload = {

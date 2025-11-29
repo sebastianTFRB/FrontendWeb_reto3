@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { PageHeader } from '../../../shared/components/PageHeader'
 import { Card } from '../../../shared/components/Card'
 import { Badge } from '../../../shared/components/Badge'
-import type { AnalyticsSummary, LeadAnalyzeResponse } from '../../../shared/types'
+import type { AnalyticsSummary, LeadAnalyzeResponse, ChatbotResponse } from '../../../shared/types'
 import { api, ApiError } from '../../../shared/services/api'
 import { Link } from 'react-router-dom'
 
@@ -11,7 +11,10 @@ export const AgentInsightsPage = () => {
   const [canal, setCanal] = useState('whatsapp')
   const [nombre, setNombre] = useState('')
   const [contacto, setContacto] = useState('')
-  const [result, setResult] = useState<LeadAnalyzeResponse | null>(null)
+
+  const [leadResult, setLeadResult] = useState<LeadAnalyzeResponse | null>(null)
+  const [chatReply, setChatReply] = useState<string | null>(null)
+
   const [analytics, setAnalytics] = useState<AnalyticsSummary | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string>()
@@ -26,9 +29,17 @@ export const AgentInsightsPage = () => {
   const handleAnalyze = async () => {
     setError(undefined)
     setLoading(true)
+    setLeadResult(null)
+    setChatReply(null)
+
     try {
-      const response = await api.analyzeLead({ mensaje: message, canal, nombre, contacto })
-      setResult(response)
+      const response: ChatbotResponse = await api.chatbotAnalyze({
+        message,                // 👈 coincide con ChatRequest.message
+        contact_key: contacto || null, // 👈 coincide con ChatRequest.contact_key
+      })
+
+      setLeadResult(response.lead_analysis)
+      setChatReply(response.reply)
     } catch (err) {
       const detail = err instanceof ApiError ? err.message : 'No se pudo analizar el mensaje'
       setError(detail)
@@ -41,7 +52,7 @@ export const AgentInsightsPage = () => {
     <div className="space-y-5">
       <PageHeader
         title="Agente inteligente"
-        subtitle="Conecta directo con /api/lead/analyze y /api/analytics/summary."
+        subtitle="Conecta directo con /api/chatbot y /api/analytics/summary."
       />
 
       <div className="grid gap-4 lg:grid-cols-3">
@@ -81,11 +92,12 @@ export const AgentInsightsPage = () => {
               className="w-full rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 px-4 py-2 text-sm font-semibold text-white shadow shadow-pink-500/30 transition hover:-translate-y-0.5 hover:shadow-lg disabled:opacity-60"
               disabled={loading}
             >
-              Analizar
+              {loading ? 'Analizando…' : 'Analizar'}
             </button>
           </div>
         </Card>
 
+        {/* Analytics igual que antes */}
         <Card title="Analytics en vivo">
           {analytics ? (
             <div className="space-y-2 text-sm text-slate-200">
@@ -127,32 +139,60 @@ export const AgentInsightsPage = () => {
         </Card>
       </div>
 
-      {result ? (
+      {leadResult ? (
         <Card title="Resultado del agente">
           <div className="grid gap-2 md:grid-cols-2">
             <div className="space-y-1 text-sm text-slate-200">
               <p className="text-slate-400">Lead score</p>
-              <Badge variant="success">Lead {result.lead_score}</Badge>
+              <Badge variant="success">Lead {leadResult.lead_score}</Badge>
+
+              <p className="text-slate-400">Interés</p>
+              <div className="flex gap-2">
+                <Badge variant={leadResult.is_interested ? 'success' : 'neutral'}>
+                  {leadResult.is_interested ? 'Interesado' : 'No interesado'}
+                </Badge>
+                <Badge variant="info">{leadResult.interest_level}</Badge>
+              </div>
+
               <p className="text-slate-400">Urgencia</p>
-              <Badge variant="info">{result.urgencia}</Badge>
+              <Badge variant="info">{leadResult.urgencia}</Badge>
+
               <p className="text-slate-400">Zona</p>
-              <p>{result.zona ?? 'Sin zona'}</p>
+              <p>{leadResult.zona ?? 'Sin zona'}</p>
+
               <p className="text-slate-400">Tipo de propiedad</p>
-              <p>{result.tipo_propiedad ?? 'Sin tipo'}</p>
+              <p>{leadResult.tipo_propiedad ?? 'Sin tipo'}</p>
             </div>
             <div className="space-y-1 text-sm text-slate-200">
               <p className="text-slate-400">Presupuesto</p>
-              <p>{result.presupuesto ?? 'Sin valor'}</p>
+              <p>{leadResult.presupuesto != null ? `$${leadResult.presupuesto}` : 'Sin valor'}</p>
+
+              <p className="text-slate-400">Intención real</p>
+              <p>{leadResult.intencion_real ?? 'Sin dato'}</p>
+
               <p className="text-slate-400">Razonamiento</p>
-              <p>{result.razonamiento}</p>
+              <p>{leadResult.razonamiento}</p>
             </div>
           </div>
-          {result.recommendations && result.recommendations.length > 0 ? (
+
+          {chatReply ? (
+            <div className="mt-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Respuesta del chatbot</p>
+              <p className="mt-1 rounded-xl bg-white/5 p-3 text-sm text-slate-100 whitespace-pre-line">
+                {chatReply}
+              </p>
+            </div>
+          ) : null}
+
+          {leadResult.recommendations && leadResult.recommendations.length > 0 ? (
             <div className="mt-4 space-y-2">
               <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Recomendaciones</p>
               <div className="grid gap-2 md:grid-cols-2">
-                {result.recommendations.map((rec) => (
-                  <div key={rec.id} className="rounded-xl border border-white/10 bg-white/5 p-3 text-xs text-slate-100">
+                {leadResult.recommendations.map((rec) => (
+                  <div
+                    key={rec.id}
+                    className="rounded-xl border border-white/10 bg-white/5 p-3 text-xs text-slate-100"
+                  >
                     <div className="flex items-center justify-between">
                       <p className="font-semibold">{rec.title ?? `Propiedad #${rec.id}`}</p>
                       {rec.price != null ? <span className="text-indigo-200">${rec.price}</span> : null}

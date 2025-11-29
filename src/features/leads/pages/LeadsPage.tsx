@@ -46,11 +46,11 @@ export const LeadsPage = () => {
   const handleCreateLead = async (payload: LeadCreatePayload) => {
     if (!token) return
     if (!isAgency) {
-      setError('Solo las agencias pueden registrar leads')
+      setError('Solo las agencias pueden registrar leads.')
       return
     }
     if (!user?.agency_id) {
-      setError('El usuario necesita agency_id para crear leads')
+      setError('El usuario necesita una agencia asociada para crear leads.')
       return
     }
     setSaving(true)
@@ -70,12 +70,14 @@ export const LeadsPage = () => {
     <div className="space-y-5">
       {!isAgency ? (
         <p className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-50">
-          Este módulo es solo para agencias. Usa el chat para compartir tus preferencias.
+          Este módulo está disponible solo para agencias. Si eres cliente, utiliza el asistente inteligente para
+          compartir tus preferencias.
         </p>
       ) : null}
+
       <PageHeader
         title="Leads"
-        subtitle="Captura, clasifica y prioriza directamente contra el backend."
+        subtitle="Registra, organiza y prioriza los contactos interesados en tus propiedades."
         actions={
           <div className="flex gap-2">
             {(['all', 'A', 'B', 'C'] as const).map((option) => (
@@ -88,7 +90,7 @@ export const LeadsPage = () => {
                     : 'bg-white/5 text-slate-200 hover:bg-white/10'
                 }`}
               >
-                {option === 'all' ? 'Todos' : `Solo ${option}`}
+                {option === 'all' ? 'Todos' : `Solo leads ${option}`}
               </button>
             ))}
           </div>
@@ -96,10 +98,10 @@ export const LeadsPage = () => {
       />
 
       <div className="grid gap-3 md:grid-cols-4">
-        <StatCard label="Leads totales" value={stats.total} helper="+ backend" />
-        <StatCard label="Leads A" value={stats.a} helper="category: A" />
-        <StatCard label="Leads B" value={stats.b} helper="category: B" />
-        <StatCard label="Leads C" value={stats.c} helper="category: C" />
+        <StatCard label="Leads totales" value={stats.total} helper="Conteo general" />
+        <StatCard label="Leads A" value={stats.a} helper="Prioridad alta" />
+        <StatCard label="Leads B" value={stats.b} helper="Prioridad media" />
+        <StatCard label="Leads C" value={stats.c} helper="Prioridad baja" />
       </div>
 
       {error ? (
@@ -108,9 +110,13 @@ export const LeadsPage = () => {
         </p>
       ) : null}
 
-      <LeadCaptureForm onSubmit={handleCreateLead} loading={saving} />
+      {isAgency && <LeadCaptureForm onSubmit={handleCreateLead} loading={saving} />}
 
-      {loading ? <p className="text-sm text-slate-300">Cargando leads...</p> : <LeadList leads={filteredLeads} />}
+      {loading ? (
+        <p className="text-sm text-slate-300">Cargando leads...</p>
+      ) : (
+        <LeadList leads={filteredLeads} />
+      )}
     </div>
   )
 }

@@ -12,9 +12,11 @@ import type {
   User,
   ChatPreferencePayload,
   ChatPreferenceResponse,
+  ChatbotResponse,
 } from '../types'
 
-const RAW_BASE_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const RAW_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:8000'
 const API_BASE = RAW_BASE_URL.replace(/\/$/, '')
 
 export class ApiError extends Error {
@@ -25,7 +27,10 @@ export class ApiError extends Error {
 type ApiRequestInit = Omit<RequestInit, 'body'> & { body?: unknown }
 
 const isJsonBody = (body: unknown) =>
-  !!body && !(body instanceof FormData) && !(body instanceof URLSearchParams) && typeof body !== 'string'
+  !!body &&
+  !(body instanceof FormData) &&
+  !(body instanceof URLSearchParams) &&
+  typeof body !== 'string'
 
 async function request<T>(path: string, init: ApiRequestInit = {}, token?: string): Promise<T> {
   const headers = new Headers(init.headers || {})
@@ -37,7 +42,12 @@ async function request<T>(path: string, init: ApiRequestInit = {}, token?: strin
   if (token) {
     headers.set('Authorization', `Bearer ${token}`)
   }
-  const shouldSetJson = !!preparedBody && !(preparedBody instanceof FormData) && !(preparedBody instanceof URLSearchParams)
+
+  const shouldSetJson =
+    !!preparedBody &&
+    !(preparedBody instanceof FormData) &&
+    !(preparedBody instanceof URLSearchParams)
+
   if (shouldSetJson && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json')
   }
@@ -49,10 +59,13 @@ async function request<T>(path: string, init: ApiRequestInit = {}, token?: strin
   if (!response.ok) {
     const detail = (data as any)?.detail
     const message =
-      typeof detail === "string"
+      typeof detail === 'string'
         ? detail
         : Array.isArray(detail)
-          ? detail.map((d: any) => d?.msg || d?.detail || "").filter(Boolean).join("; ")
+          ? detail
+              .map((d: any) => d?.msg || d?.detail || '')
+              .filter(Boolean)
+              .join('; ')
           : response.statusText
 
     const error = new ApiError(message || response.statusText)
@@ -65,29 +78,43 @@ async function request<T>(path: string, init: ApiRequestInit = {}, token?: strin
 }
 
 export const api = {
+  // Auth
   login: (email: string, password: string) =>
     request<TokenResponse>('/api/auth/login', {
       method: 'POST',
       body: { email, password },
     }),
+
   register: (payload: { email: string; password: string; full_name?: string }) =>
     request<User>('/api/auth/register', {
       method: 'POST',
       body: payload,
     }),
+
   me: (token: string) => request<User>('/api/auth/me', { method: 'GET' }, token),
 
+  // Leads CRUD
   listLeads: (token: string) => request<Lead[]>('/api/leads', { method: 'GET' }, token),
+
   createLead: (payload: LeadCreatePayload, token: string) =>
     request<Lead>('/api/leads', { method: 'POST', body: payload }, token),
-  getLead: (id: number, token: string) => request<Lead>(`/api/leads/${id}`, { method: 'GET' }, token),
+
+  getLead: (id: number, token: string) =>
+    request<Lead>(`/api/leads/${id}`, { method: 'GET' }, token),
+
   updateLead: (id: number, payload: LeadUpdatePayload, token: string) =>
     request<Lead>(`/api/leads/${id}`, { method: 'PUT', body: payload }, token),
+
   deleteLead: (id: number, token: string) =>
     request<void>(`/api/leads/${id}`, { method: 'DELETE' }, token),
-  addInteraction: (id: number, payload: { channel?: string; direction?: string; message: string }, token: string) =>
-    request(`/api/leads/${id}/interactions`, { method: 'POST', body: payload }, token),
 
+  addInteraction: (
+    id: number,
+    payload: { channel?: string; direction?: string; message: string },
+    token: string,
+  ) => request(`/api/leads/${id}/interactions`, { method: 'POST', body: payload }, token),
+
+  // Properties
   listProperties: (
     token: string,
     filters: {
@@ -98,7 +125,7 @@ export const api = {
       bedrooms?: number | null
       bathrooms?: number | null
       parking?: boolean | null
-    } = {}
+    } = {},
   ) => {
     const params = new URLSearchParams()
     if (filters.location) params.set('location', filters.location)
@@ -112,9 +139,16 @@ export const api = {
     const path = `/api/properties${query ? `?${query}` : ''}`
     return request<Property[]>(path, { method: 'GET' }, token)
   },
-  getProperty: (id: number, token: string) => request<Property>(`/api/properties/${id}`, { method: 'GET' }, token),
+
+  getProperty: (id: number, token: string) =>
+    request<Property>(`/api/properties/${id}`, { method: 'GET' }, token),
+
   createProperty: (payload: PropertyCreatePayload, token: string) => {
-    if ((payload as any).photos && Array.isArray((payload as any).photos) && (payload as any).photos.length > 0) {
+    if (
+      (payload as any).photos &&
+      Array.isArray((payload as any).photos) &&
+      (payload as any).photos.length > 0
+    ) {
       const formData = new FormData()
       formData.append('title', payload.title)
       formData.append('price', String(payload.price))
@@ -135,16 +169,39 @@ export const api = {
     const { photos, ...rest } = payload as any
     return request<Property>('/api/properties', { method: 'POST', body: rest }, token)
   },
+
   updateProperty: (id: number, payload: PropertyUpdatePayload, token: string) =>
     request<Property>(`/api/properties/${id}`, { method: 'PUT', body: payload }, token),
+
   deleteProperty: (id: number, token: string) =>
     request<void>(`/api/properties/${id}`, { method: 'DELETE' }, token),
 
+  // IA de leads (solo análisis clásico)
   analyzeLead: (payload: LeadAnalyzeRequest) =>
-    request<LeadAnalyzeResponse>('/api/agent/analyze', { method: 'POST', body: payload }),
-  analytics: () => request<AnalyticsSummary>('/api/analytics/summary', { method: 'GET' }),
+    request<LeadAnalyzeResponse>('/api/agent/analyze', {
+      method: 'POST',
+      body: payload,
+    }),
+
+  // Chatbot conversacional (usa ConversationalAgentService en el back)
+  chatbotAnalyze: (payload: { message: string; contact_key?: string | null }) =>
+    request<ChatbotResponse>('/api/chatbot/', {
+      method: 'POST',
+      body: payload,
+    }),
+
+  // Analytics
+  analytics: () =>
+    request<AnalyticsSummary>('/api/analytics/summary', {
+      method: 'GET',
+    }),
+
+  // Preferencias de chat
   saveChatPreferences: (payload: ChatPreferencePayload, token?: string) =>
-    request<ChatPreferenceResponse>('/api/chat/preferences', { method: 'POST', body: payload }, token),
+    request<ChatPreferenceResponse>('/api/chat/preferences', {
+      method: 'POST',
+      body: payload,
+    }, token),
 }
 
 export { API_BASE }

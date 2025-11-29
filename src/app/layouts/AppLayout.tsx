@@ -49,18 +49,18 @@ export const AppLayout = () => {
       className={`relative min-h-screen ${
         isAgency
           ? 'bg-gradient-to-br from-slate-950 via-black to-slate-950'
-          : 'bg-gradient-to-br from-teal-950 via-slate-950 to-black'
+          : 'bg-gradient-to-br from-black-950 via-slate-950 to-red'
       } text-slate-50`}
     >
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div
           className={`absolute -top-48 -left-32 h-72 w-72 rounded-full ${
-            isAgency ? 'bg-red-600/15' : 'bg-emerald-500/20'
+            isAgency ? 'bg-red-600/15' : 'bg-red-500/20'
           } blur-3xl`}
         />
         <div
           className={`absolute -bottom-48 -right-24 h-80 w-80 rounded-full ${
-            isAgency ? 'bg-red-600/12' : 'bg-cyan-500/15'
+            isAgency ? 'bg-red-600/12' : 'bg-red-500/15'
           } blur-3xl`}
         />
         <div className="absolute top-1/3 right-1/4 h-96 w-96 rounded-full bg-white/5 blur-3xl" />
@@ -68,16 +68,16 @@ export const AppLayout = () => {
       <div className="relative mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 lg:flex-row">
         <aside
           className={`w-full rounded-2xl border ${
-            isAgency ? 'border-red-600/30' : 'border-emerald-500/30'
+            isAgency ? 'border-red-600/30' : 'border-red-500/30'
           } bg-black/40 p-4 backdrop-blur lg:w-72 lg:self-start`}
         >
           <div
             className={`flex items-center gap-3 rounded-xl border ${
-              isAgency ? 'border-red-600/30 bg-gradient-to-r from-red-700/30 to-red-500/20' : 'border-emerald-500/30 bg-gradient-to-r from-emerald-700/30 to-teal-500/20'
-            } px-4 py-3 shadow-lg ${isAgency ? 'shadow-red-900/30' : 'shadow-emerald-900/30'}`}
+              isAgency ? 'border-red-600/30 bg-gradient-to-r from-red-700/30 to-red-500/20' : 'border-red-500/30 bg-gradient-to-r from-red-700/30 to-black-500/20'
+            } px-4 py-3 shadow-lg ${isAgency ? 'shadow-red-900/30' : 'shadow-red-900/30'}`}
           >
             <div
-              className={`rounded-full ${isAgency ? 'bg-red-600/30 text-red-200' : 'bg-emerald-500/30 text-emerald-100'} p-2`}
+              className={`rounded-full ${isAgency ? 'bg-red-600/30 text-red-200' : 'bg-red-500/30 text-red-100'} p-2`}
             >
               <SparklesIcon />
             </div>
@@ -110,8 +110,8 @@ export const AppLayout = () => {
                     'flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition-all',
                     isActive
                       ? isAgency
-                        ? 'bg-gradient-to-r from-red-600/30 to-red-500/30 text-white shadow shadow-red-900/30'
-                        : 'bg-gradient-to-r from-emerald-600/30 to-cyan-500/30 text-white shadow shadow-emerald-900/30'
+                        ? 'bg-gradient-to-r from-red-600/30 to-black-500/30 text-white shadow shadow-red-900/30'
+                        : 'bg-gradient-to-r from-red-600/30 to-black-500/30 text-white shadow shadow-red-900/30'
                       : 'text-gray-300 hover:bg-white/5 hover:text-white',
                   ].join(' ')
                 }
@@ -124,16 +124,16 @@ export const AppLayout = () => {
           <button
             onClick={() => logout()}
             className={`mt-6 w-full rounded-xl border ${
-              isAgency ? 'border-red-600/30' : 'border-emerald-500/30'
+              isAgency ? 'border-red-600/30' : 'border-red-500/30'
             } bg-black/30 px-3 py-2 text-sm font-semibold text-white transition hover:-translate-y-0.5 ${
-              isAgency ? 'hover:border-red-500 hover:text-red-100' : 'hover:border-emerald-400 hover:text-emerald-50'
+              isAgency ? 'hover:border-red-500 hover:text-red-100' : 'hover:border-red-400 hover:text-red-50'
             }`}
           >
             Cerrar sesion
           </button>
           <div
             className={`mt-6 rounded-xl border ${
-              isAgency ? 'border-red-600/30 bg-gradient-to-br from-red-700/20 via-red-500/10 to-red-800/20' : 'border-emerald-500/30 bg-gradient-to-br from-emerald-700/15 via-teal-500/10 to-cyan-600/20'
+              isAgency ? 'border-red-600/30 bg-gradient-to-br from-red-700/20 via-red-500/10 to-red-800/20' : 'border-red-500/30 bg-gradient-to-br from-red-700/15 via-black-500/10 to-red-600/20'
             } p-4`}
           >
             <p className="text-sm text-slate-200">{isAgency ? 'Network effect' : 'Listo para comprar'}</p>

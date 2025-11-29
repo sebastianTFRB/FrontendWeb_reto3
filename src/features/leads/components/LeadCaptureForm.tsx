@@ -47,7 +47,6 @@ export const LeadCaptureForm = ({ onSubmit, loading }: LeadCaptureFormProps) => 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-sm font-semibold text-white">Captura inteligente</p>
-          <p className="text-xs text-slate-300">Payload alineado con /api/leads.</p>
         </div>
       </div>
 

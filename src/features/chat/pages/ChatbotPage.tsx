@@ -4,7 +4,7 @@ import { Card } from '../../../shared/components/Card'
 import { PageHeader } from '../../../shared/components/PageHeader'
 import { useAuth } from '../../../shared/hooks/useAuth'
 import { api, ApiError } from '../../../shared/services/api'
-import type { LeadAnalyzeResponse, ChatPreferencePayload, ChatPreferenceResponse, Property } from '../../../shared/types'
+import type { LeadAnalyzeResponse, Property, ChatbotResponse } from '../../../shared/types'
 
 type ChatMessage = {
   from: 'bot' | 'user'
@@ -24,6 +24,7 @@ export const ChatbotPage = () => {
   const { token, user } = useAuth()
   const [searchParams] = useSearchParams()
   const propertyId = searchParams.get('propertyId')
+
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       from: 'bot',
@@ -35,7 +36,6 @@ export const ChatbotPage = () => {
   const [stepIndex, setStepIndex] = useState(0)
   const [saving, setSaving] = useState(false)
   const [score, setScore] = useState<LeadAnalyzeResponse | null>(null)
-  const [profile, setProfile] = useState<ChatPreferenceResponse | null>(null)
   const [error, setError] = useState<string>()
   const [prefs, setPrefs] = useState<Record<string, any>>({})
   const [property, setProperty] = useState<Property | null>(null)
@@ -76,9 +76,11 @@ export const ChatbotPage = () => {
     setMessages((prev) => [...prev, { from: 'user', text }])
     setInput('')
     setError(undefined)
-    const currentStep = steps[stepIndex]
 
+    const currentStep = steps[stepIndex]
     const updatedPrefs = { ...prefs }
+
+    // Actualizar preferencias locales según el paso
     if (currentStep) {
       if (currentStep.key === 'presupuesto') {
         const digits = parseInt(text.replace(/[^\d]/g, ''), 10)
@@ -99,32 +101,19 @@ export const ChatbotPage = () => {
 
     setSaving(true)
     try {
-      const payload: ChatPreferencePayload = {
-        mensaje: text,
-        canal: 'web',
-        contacto: user?.email || undefined,
-        nombre: user?.full_name || undefined,
-        usuario_id: user?.id,
-        agency_id: user?.agency_id || undefined,
-        presupuesto: updatedPrefs.presupuesto,
-        zona: updatedPrefs.zona,
-        tipo_propiedad: updatedPrefs.tipo_propiedad,
-        habitaciones: updatedPrefs.habitaciones,
-        banos: updatedPrefs.banos,
-        garaje: updatedPrefs.garaje,
-        property_id: property?.id,
-      }
-      const saved = await api.saveChatPreferences(payload, token || undefined)
-      setProfile(saved)
-      const analysis = await api.analyzeLead({
-        mensaje: text,
-        canal: 'web',
-        nombre: user?.full_name || undefined,
-        contacto: user?.email || undefined,
-        usuario_id: user?.id ? String(user.id) : undefined,
-        agency_id: user?.agency_id ?? undefined,
+      // Llamamos al backend de chatbot (ConversationalAgentService → LeadAgentService)
+      const chatbotResponse: ChatbotResponse = await api.chatbotAnalyze({
+        message: text,
+        contact_key: user?.email || undefined,
       })
-      setScore(analysis)
+
+      // Guardamos el score/lead_analysis en el panel derecho
+      setScore(chatbotResponse.lead_analysis)
+
+      // Añadimos la respuesta del bot al chat
+      setMessages((prev) => [...prev, { from: 'bot', text: chatbotResponse.reply }])
+
+      // Flujo de pasos guiados
       if (stepIndex < steps.length - 1) {
         setStepIndex((i) => i + 1)
         setMessages((prev) => [...prev, { from: 'bot', text: steps[stepIndex + 1].prompt }])
@@ -138,7 +127,7 @@ export const ChatbotPage = () => {
         ])
       }
     } catch (err) {
-      const detail = err instanceof ApiError ? err.message : 'No pude guardar tus datos'
+      const detail = err instanceof ApiError ? err.message : 'No pude procesar tu mensaje'
       setError(detail)
     } finally {
       setSaving(false)
@@ -149,7 +138,7 @@ export const ChatbotPage = () => {
     <div className="space-y-5">
       <PageHeader
         title="Chat tipo WhatsApp"
-        subtitle="Guardamos cada respuesta en Supabase y la agencia ve tus preferencias."
+        subtitle="Usamos el agente inteligente para analizar tus respuestas y sugerir propiedades."
       />
       <div className="grid gap-4 lg:grid-cols-3">
         <Card title="Chat" className="lg:col-span-2">
@@ -204,6 +193,7 @@ export const ChatbotPage = () => {
             <p>
               {stepIndex + 1} / {steps.length} {nextPrompt ? `→ ${nextPrompt}` : ''}
             </p>
+
             <p className="text-slate-400">Preferencias</p>
             <ul className="space-y-1">
               {Object.entries(prefs).map(([k, v]) => (
@@ -212,17 +202,22 @@ export const ChatbotPage = () => {
                 </li>
               ))}
             </ul>
+
             {score ? (
               <div className="space-y-1 rounded-xl bg-white/5 p-3">
                 <p>Lead {score.lead_score}</p>
-                <p>Interés: {score.is_interested ? 'Alto' : 'Bajo'} ({score.interest_level})</p>
+                <p>
+                  Interés: {score.is_interested ? 'Alto' : 'Bajo'} ({score.interest_level})
+                </p>
                 <p>Presupuesto: {score.presupuesto ?? 'N/A'}</p>
                 <p>Zona: {score.zona ?? 'N/A'}</p>
                 <p>Urgencia: {score.urgencia}</p>
                 <p className="text-slate-400 text-xs">Razón: {score.razonamiento}</p>
                 {score.recommendations && score.recommendations.length > 0 ? (
                   <div className="mt-3 space-y-2">
-                    <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Recomendaciones</p>
+                    <p className="text-xs uppercase tracking-[0.2em] text-slate-400">
+                      Recomendaciones
+                    </p>
                     <div className="grid gap-2">
                       {score.recommendations.map((rec) => (
                         <div
@@ -234,7 +229,9 @@ export const ChatbotPage = () => {
                             <p className="text-slate-400">{rec.location ?? 'Sin zona'}</p>
                           </div>
                           <div className="flex items-center gap-2">
-                            {rec.price != null ? <span className="font-semibold">${rec.price}</span> : null}
+                            {rec.price != null ? (
+                              <span className="font-semibold">${rec.price}</span>
+                            ) : null}
                             {rec.id ? (
                               <Link
                                 to={`/app/properties/${rec.id}`}
@@ -253,14 +250,6 @@ export const ChatbotPage = () => {
             ) : (
               <p className="text-slate-400">Sin score aún.</p>
             )}
-            {profile ? (
-              <div className="space-y-1 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 text-xs">
-                <p>Preferencias guardadas en Supabase.</p>
-                <p>
-                  Interés calculado: {profile.interest_level ?? 'N/D'} {profile.is_interested ? '✅' : '⚪️'}
-                </p>
-              </div>
-            ) : null}
           </div>
         </Card>
       </div>
