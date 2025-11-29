@@ -1,13 +1,13 @@
 import { Link } from 'react-router-dom'
 import type { Lead } from '../../../shared/types'
 import { Badge } from '../../../shared/components/Badge'
-import { formatCurrency, formatDate } from '../../../shared/utils/format'
+import { formatCurrency, formatDate, formatUrgency } from '../../../shared/utils/format'
 
 type LeadListProps = {
   leads: Lead[]
 }
 
-const statusColor: Record<Lead['status'], 'success' | 'warning' | 'danger'> = {
+const categoryColor: Record<Lead['category'], 'success' | 'warning' | 'danger'> = {
   A: 'success',
   B: 'warning',
   C: 'danger',
@@ -24,30 +24,23 @@ export const LeadList = ({ leads }: LeadListProps) => {
         >
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <p className="text-sm text-slate-300">{formatDate(lead.createdAt)}</p>
-              <h3 className="text-lg font-semibold text-white">{lead.name}</h3>
-              <p className="text-sm text-slate-300">{lead.location}</p>
+              <p className="text-sm text-slate-300">{formatDate(lead.created_at)}</p>
+              <h3 className="text-lg font-semibold text-white">{lead.full_name}</h3>
+              <p className="text-sm text-slate-300">{lead.preferred_area || 'Sin zona'}</p>
             </div>
-            <Badge variant={statusColor[lead.status]}>
-              Lead {lead.status} • {lead.urgency}
+            <Badge variant={categoryColor[lead.category]}>
+              Lead {lead.category} · {formatUrgency(lead.urgency)}
             </Badge>
           </div>
           <div className="flex flex-wrap items-center gap-3 text-sm text-slate-300">
             <span className="rounded-lg bg-white/5 px-2 py-1 font-semibold text-indigo-100">
-              {formatCurrency(lead.budget)}
+              {lead.budget != null ? formatCurrency(lead.budget) : 'Sin presupuesto'}
             </span>
-            <span className="rounded-lg bg-white/5 px-2 py-1">Urgencia: {lead.urgency}</span>
-            {lead.tags?.map((tag) => (
-              <span
-                key={tag}
-                className="rounded-full bg-gradient-to-r from-pink-500/30 to-purple-500/30 px-2 py-1 text-xs font-semibold text-pink-50"
-              >
-                {tag}
-              </span>
-            ))}
+            <span className="rounded-lg bg-white/5 px-2 py-1">Urgencia: {formatUrgency(lead.urgency)}</span>
+            <span className="rounded-lg bg-white/5 px-2 py-1">Estado: {lead.status}</span>
           </div>
           <p className="text-sm text-slate-200">
-            {lead.goal} • {lead.source}
+            {lead.email ?? 'Sin email'} · {lead.phone ?? 'Sin telefono'}
           </p>
         </Link>
       ))}

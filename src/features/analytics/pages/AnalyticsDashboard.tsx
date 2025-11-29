@@ -1,48 +1,62 @@
-import { activityFeed, analyticsSnapshot, trendsMock } from '../../../shared/services/data'
+import { useEffect, useMemo, useState } from 'react'
 import { PageHeader } from '../../../shared/components/PageHeader'
 import { StatCard } from '../../../shared/components/StatCard'
 import { Card } from '../../../shared/components/Card'
 import { Badge } from '../../../shared/components/Badge'
-import { BarChart } from '../components/BarChart'
+import { api, ApiError } from '../../../shared/services/api'
+import type { AnalyticsSummary } from '../../../shared/types'
 
 export const AnalyticsDashboard = () => {
-  const { distribution } = analyticsSnapshot
-  const total = distribution.A + distribution.B + distribution.C
-  const distributionList = [
-    { label: 'A', value: distribution.A, color: 'bg-emerald-500' },
-    { label: 'B', value: distribution.B, color: 'bg-amber-500' },
-    { label: 'C', value: distribution.C, color: 'bg-rose-500' },
-  ]
+  const [summary, setSummary] = useState<AnalyticsSummary | null>(null)
+  const [error, setError] = useState<string>()
+
+  useEffect(() => {
+    api
+      .analytics()
+      .then((data) => setSummary(data))
+      .catch((err) => {
+        const detail = err instanceof ApiError ? err.message : 'No se pudo cargar analytics'
+        setError(detail)
+      })
+  }, [])
+
+  const distributionList = useMemo(() => {
+    if (!summary) return []
+    const counts = summary.lead_score_counts
+    const total = Math.max(
+      1,
+      Object.values(counts).reduce((acc, value) => acc + value, 0)
+    )
+    return ['A', 'B', 'C'].map((label) => ({
+      label,
+      value: counts[label] ?? 0,
+      percent: ((counts[label] ?? 0) / total) * 100,
+      color: label === 'A' ? 'bg-emerald-500' : label === 'B' ? 'bg-amber-500' : 'bg-rose-500',
+    }))
+  }, [summary])
 
   return (
     <div className="space-y-5">
-      <PageHeader
-        title="Dashboard"
-        subtitle="Indicadores de captación, clasificación y eficiencia del agente."
-      />
+      <PageHeader title="Dashboard" subtitle="Indicadores entregados por /api/analytics/summary." />
+
+      {error ? <p className="text-sm text-amber-200">{error}</p> : null}
 
       <div className="grid gap-3 md:grid-cols-3">
         <StatCard
           label="Leads captados"
-          value={analyticsSnapshot.totalLeads}
-          helper="Esta semana"
-          trend="+14%"
+          value={summary?.total_leads ?? 0}
+          helper="total_leads"
         />
         <StatCard
-          label="Leads clasificados"
-          value={analyticsSnapshot.classifiedLeads}
-          helper="Automáticos"
-          trend="82% precisión"
+          label="Presupuesto promedio"
+          value={summary?.avg_presupuesto ?? 'N/A'}
+          helper="avg_presupuesto"
         />
-        <StatCard
-          label="Eficiencia del agente"
-          value={`${Math.round(analyticsSnapshot.efficiency * 100)}%`}
-          helper="Tiempo ahorrado"
-        />
+        <StatCard label="Top zonas" value={summary?.top_zonas.length ?? 0} helper="top_zonas" />
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <Card title="Distribución A/B/C" className="md:col-span-2">
+        <Card title="Distribucion A/B/C" className="md:col-span-2">
           <div className="space-y-4">
             <div className="flex gap-3">
               {distributionList.map((item) => (
@@ -52,65 +66,49 @@ export const AnalyticsDashboard = () => {
                     <span className="font-semibold">{item.value}</span>
                   </div>
                   <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-white/5">
-                    <div
-                      className={`${item.color} h-full rounded-full`}
-                      style={{ width: `${(item.value / total) * 100}%` }}
-                    />
+                    <div className={`${item.color} h-full rounded-full`} style={{ width: `${item.percent}%` }} />
                   </div>
                 </div>
               ))}
             </div>
-            <BarChart points={trendsMock} />
           </div>
         </Card>
 
-        <Card title="Actividad reciente">
-          <div className="space-y-3">
-            {activityFeed.map((activity) => (
-              <div
-                key={activity.id}
-                className="flex items-start justify-between rounded-xl border border-white/10 bg-white/5 p-3"
-              >
-                <div>
-                  <p className="text-sm text-white">{activity.message}</p>
-                  <p className="text-xs text-slate-400">{activity.time}</p>
-                </div>
-                <Badge variant={activity.status === 'success' ? 'success' : 'warning'}>
-                  {activity.status}
-                </Badge>
-              </div>
-            ))}
+        <Card title="Urgencias">
+          <div className="flex flex-wrap gap-2">
+            {summary
+              ? Object.entries(summary.urgency_counts).map(([label, value]) => (
+                  <Badge key={label} variant="info">
+                    {label}: {value}
+                  </Badge>
+                ))
+              : null}
           </div>
         </Card>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <Card
-          title="Eficiencia operativa"
-          description="Cómo el agente reduce esfuerzo manual."
-          className="relative overflow-hidden"
-        >
-          <div className="absolute right-0 top-0 h-32 w-32 rounded-full bg-indigo-500/10 blur-3xl" />
-          <ul className="space-y-2 text-sm text-slate-200">
-            <li>• 3m17s promedio de clasificación por lead.</li>
-            <li>• Disminución del 38% en leads no calificados.</li>
-            <li>• Priorización basada en intención real y presupuesto.</li>
-          </ul>
+        <Card title="Tipos de propiedad">
+          <div className="flex flex-wrap gap-2">
+            {summary
+              ? Object.entries(summary.tipo_propiedad_counts).map(([label, value]) => (
+                  <Badge key={label} variant="neutral">
+                    {label}: {value}
+                  </Badge>
+                ))
+              : null}
+          </div>
         </Card>
 
-        <Card title="Network effect" description="Más inmobiliarias → mejor modelo.">
-          <div className="flex items-center gap-3">
-            <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-cyan-500 text-center text-2xl font-bold text-white shadow-lg shadow-indigo-500/30">
-              <div className="flex h-full flex-col items-center justify-center">
-                <span>+5</span>
-                <span className="text-xs">nuevas</span>
-              </div>
-            </div>
-            <div className="space-y-1 text-sm text-slate-200">
-              <p>Datos frescos de 5 inmobiliarias esta semana.</p>
-              <p className="text-indigo-100">Cobertura: {analyticsSnapshot.coverageZones} zonas.</p>
-              <p className="text-slate-300">↑ Precisión mejora con cada dataset.</p>
-            </div>
+        <Card title="Canales">
+          <div className="flex flex-wrap gap-2">
+            {summary
+              ? Object.entries(summary.canal_counts).map(([label, value]) => (
+                  <Badge key={label} variant="info">
+                    {label}: {value}
+                  </Badge>
+                ))
+              : null}
           </div>
         </Card>
       </div>

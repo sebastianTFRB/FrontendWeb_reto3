@@ -1,11 +1,11 @@
-import type { Lead } from '../types/leads'
-
-export const formatCurrency = (value: number) =>
-  Intl.NumberFormat('es-MX', {
+export const formatCurrency = (value?: number | null) => {
+  const parsed = Number(value ?? 0)
+  return Intl.NumberFormat('es-MX', {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 0,
-  }).format(value)
+  }).format(Number.isNaN(parsed) ? 0 : parsed)
+}
 
 export const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString('es-MX', {
@@ -13,13 +13,10 @@ export const formatDate = (iso: string) =>
     month: 'short',
   })
 
-export const classifyLead = (lead: Lead) => {
-  const urgencyScore = lead.urgency === 'alta' ? 2 : lead.urgency === 'media' ? 1 : 0
-  const budgetScore = lead.budget >= 250000 ? 2 : lead.budget >= 150000 ? 1 : 0
-  const intentScore = (lead.intentScore ?? 0.5) * 2
-  const total = urgencyScore + budgetScore + intentScore
-
-  if (total >= 4.5) return 'A'
-  if (total >= 3) return 'B'
-  return 'C'
+export const formatUrgency = (urgency?: string) => {
+  if (!urgency) return 'Sin definir'
+  if (urgency === 'high') return 'Alta'
+  if (urgency === 'medium') return 'Media'
+  if (urgency === 'low') return 'Baja'
+  return urgency
 }

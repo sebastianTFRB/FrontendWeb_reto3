@@ -17,7 +17,7 @@ export const Card = ({
 }: CardProps) => {
   return (
     <div
-      className={`glass rounded-2xl bg-gradient-to-br from-white/5 via-white/0 to-pink-500/10 p-4 shadow-lg shadow-pink-500/10 ${className}`}
+      className={`rounded-2xl bg-gradient-to-br from-red-900/40 via-black/60 to-black/80 border border-red-600/30 p-4 shadow-lg shadow-red-900/30 ${className}`}
     >
       {(title || description || action) && (
         <div className="mb-3 flex flex-wrap items-start justify-between gap-2">
