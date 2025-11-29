@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { Lead, LeadCreatePayload } from '../../../shared/types'
 import { LeadCaptureForm } from '../components/LeadCaptureForm'
 import { LeadList } from '../components/LeadList'
 import { PageHeader } from '../../../shared/components/PageHeader'
 import { StatCard } from '../../../shared/components/StatCard'
 import { api, ApiError } from '../../../shared/services/api'
+import { LeadServiceWeb } from '../../../shared/services/leadSupabaseService'
 import { useAuth } from '../../../shared/hooks/useAuth'
 
 export const LeadsPage = () => {
@@ -16,19 +17,23 @@ export const LeadsPage = () => {
   const [saving, setSaving] = useState<boolean>(false)
   const [error, setError] = useState<string>()
 
-  useEffect(() => {
-    if (!token) return
+  const loadLeads = useCallback(async () => {
     setLoading(true)
     setError(undefined)
-    api
-      .listLeads(token)
-      .then((data) => setLeads(data))
-      .catch((err) => {
-        const detail = err instanceof ApiError ? err.message : 'No se pudo cargar los leads'
-        setError(detail)
-      })
-      .finally(() => setLoading(false))
-  }, [token])
+    try {
+      const data = await LeadServiceWeb.getLeads()
+      setLeads(data)
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : 'No se pudieron cargar los leads'
+      setError(detail)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    loadLeads()
+  }, [loadLeads, token])
 
   const filteredLeads = useMemo(
     () => (filter === 'all' ? leads : leads.filter((lead) => lead.category === filter)),

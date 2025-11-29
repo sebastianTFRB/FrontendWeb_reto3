@@ -6,6 +6,7 @@ import { StatCard } from '../../../shared/components/StatCard'
 import type { Property, PropertyCreatePayload } from '../../../shared/types'
 import { api, ApiError } from '../../../shared/services/api'
 import { useAuth } from '../../../shared/hooks/useAuth'
+import { formatCurrency } from '../../../shared/utils/format'
 
 export const PropertiesPage = () => {
   const { token, user } = useAuth()
@@ -203,7 +204,7 @@ export const PropertiesPage = () => {
         <StatCard label="Propiedades activas" value={stats.total} helper="Filtradas" />
         <StatCard label="Disponibles" value={stats.available} helper="available" />
         <StatCard label="Vendidas" value={stats.sold} helper="sold" />
-        <StatCard label="Precio promedio" value={`$${stats.avg.toLocaleString()}`} helper="USD" />
+        <StatCard label="Precio promedio" value={formatCurrency(stats.avg)} helper="COP" />
       </div>
 
       {error && (

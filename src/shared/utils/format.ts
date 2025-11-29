@@ -1,8 +1,8 @@
 export const formatCurrency = (value?: number | null) => {
   const parsed = Number(value ?? 0)
-  return Intl.NumberFormat('es-MX', {
+  return Intl.NumberFormat('es-CO', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'COP',
     maximumFractionDigits: 0,
   }).format(Number.isNaN(parsed) ? 0 : parsed)
 }

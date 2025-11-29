@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import type { Lead } from '../../../shared/types'
 import { Badge } from '../../../shared/components/Badge'
@@ -6,6 +6,7 @@ import { formatCurrency, formatDate, formatUrgency } from '../../../shared/utils
 import { Card } from '../../../shared/components/Card'
 import { PageHeader } from '../../../shared/components/PageHeader'
 import { api, ApiError } from '../../../shared/services/api'
+import { LeadServiceWeb } from '../../../shared/services/leadSupabaseService'
 import { useAuth } from '../../../shared/hooks/useAuth'
 
 export const LeadDetailPage = () => {
@@ -18,24 +19,51 @@ export const LeadDetailPage = () => {
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string>()
 
-  const loadLead = () => {
-    if (!token || Number.isNaN(leadId)) return
+  const loadLead = useCallback(async () => {
+    if (Number.isNaN(leadId)) {
+      setLoading(false)
+      return
+    }
     setLoading(true)
     setError(undefined)
 
-    api
-      .getLead(leadId, token)
-      .then((data) => setLead(data)) // <- sigue leyendo desde tu backend / base de datos
-      .catch((err) => {
-        const detail = err instanceof ApiError ? err.message : 'No se pudo cargar el lead'
-        setError(detail)
-      })
-      .finally(() => setLoading(false))
-  }
+    try {
+      const fromSupabase = await LeadServiceWeb.getLeadById(leadId)
+      if (fromSupabase) {
+        setLead(fromSupabase)
+        return
+      }
+
+      if (token) {
+        const fromApi = await api.getLead(leadId, token)
+        setLead(fromApi)
+        return
+      }
+
+      setError('Lead no encontrado')
+    } catch (err) {
+      if (token) {
+        try {
+          const fromApi = await api.getLead(leadId, token)
+          setLead(fromApi)
+          return
+        } catch (apiErr) {
+          const detail = apiErr instanceof ApiError ? apiErr.message : 'No se pudo cargar el lead'
+          setError(detail)
+          return
+        }
+      }
+
+      const detail = err instanceof Error ? err.message : 'No se pudo cargar el lead'
+      setError(detail)
+    } finally {
+      setLoading(false)
+    }
+  }, [leadId, token])
 
   useEffect(() => {
     loadLead()
-  }, [token, id])
+  }, [loadLead])
 
   const recommendedTag = useMemo(() => {
     if (!lead) return ''
