@@ -1,14 +1,23 @@
 import type { Property } from '../../../shared/types'
+import { Link } from 'react-router-dom'
 import { Badge } from '../../../shared/components/Badge'
 import { formatCurrency, formatDate } from '../../../shared/utils/format'
 
 type PropertyCardProps = {
   property: Property
+  onChat?: (property: Property) => void
 }
 
-export const PropertyCard = ({ property }: PropertyCardProps) => {
+export const PropertyCard = ({ property, onChat }: PropertyCardProps) => {
+  const cover = property.photos && property.photos.length > 0 ? property.photos[0] : null
   return (
     <div className="group flex flex-col rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900/60 via-slate-900/40 to-slate-900/20 p-4 shadow shadow-indigo-500/10 transition hover:-translate-y-1 hover:border-indigo-400/40">
+      {cover ? (
+        <div className="mb-3 overflow-hidden rounded-xl border border-white/10">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={cover} alt={property.title} className="h-44 w-full object-cover transition duration-300 group-hover:scale-[1.02]" />
+        </div>
+      ) : null}
       <div className="flex items-center justify-between">
         <Badge variant="info">{property.status}</Badge>
         <span className="text-xs text-slate-400">{formatDate(property.created_at)}</span>
@@ -16,13 +25,40 @@ export const PropertyCard = ({ property }: PropertyCardProps) => {
       <div className="mt-2 space-y-1">
         <p className="text-sm text-slate-300">{property.location ?? 'Sin ubicacion'}</p>
         <h3 className="text-lg font-semibold text-white">{property.title}</h3>
+        <p className="text-xs uppercase tracking-[0.18em] text-indigo-200">
+          {property.property_type ?? 'propiedad'}
+        </p>
         {property.description ? <p className="text-sm text-slate-300">{property.description}</p> : null}
       </div>
       <p className="mt-2 text-indigo-100">{formatCurrency(property.price)}</p>
       <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-300">
-        {property.area ? <span>{property.area}</span> : null}
-        {property.bedrooms != null ? <span>{property.bedrooms} recamaras</span> : null}
-        {property.bathrooms != null ? <span>{property.bathrooms} banos</span> : null}
+        {property.area ? <span className="rounded-lg bg-white/5 px-2 py-1">{property.area}</span> : null}
+        {property.bedrooms != null ? (
+          <span className="rounded-lg bg-white/5 px-2 py-1">{property.bedrooms} hab</span>
+        ) : null}
+        {property.bathrooms != null ? (
+          <span className="rounded-lg bg-white/5 px-2 py-1">{property.bathrooms} baños</span>
+        ) : null}
+        {property.parking != null ? (
+          <span className="rounded-lg bg-white/5 px-2 py-1">{property.parking ? 'Garaje' : 'Sin garaje'}</span>
+        ) : null}
+      </div>
+      <div className="mt-3 flex gap-2">
+        <Link
+          to={`/app/properties/${property.id}`}
+          className="inline-flex items-center justify-center rounded-xl border border-white/10 px-3 py-2 text-xs font-semibold text-slate-100 transition hover:border-indigo-400 hover:text-white"
+        >
+          Ver detalle
+        </Link>
+        {onChat ? (
+          <button
+            type="button"
+            onClick={() => onChat(property)}
+            className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-cyan-600 to-emerald-500 px-3 py-2 text-xs font-semibold text-white shadow shadow-cyan-500/30 transition hover:-translate-y-0.5 hover:shadow-lg"
+          >
+            Hablar con asesor
+          </button>
+        ) : null}
       </div>
     </div>
   )

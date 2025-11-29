@@ -22,10 +22,10 @@ export const AnalyticsDashboard = () => {
 
   const distributionList = useMemo(() => {
     if (!summary) return []
-    const counts = summary.lead_score_counts
+    const counts = summary.by_score || {}
     const total = Math.max(
       1,
-      Object.values(counts).reduce((acc, value) => acc + value, 0)
+      Object.values(counts).reduce((acc, value) => acc + (value || 0), 0)
     )
     return ['A', 'B', 'C'].map((label) => ({
       label,
@@ -48,15 +48,19 @@ export const AnalyticsDashboard = () => {
           helper="total_leads"
         />
         <StatCard
-          label="Presupuesto promedio"
-          value={summary?.avg_presupuesto ?? 'N/A'}
-          helper="avg_presupuesto"
+          label="Interesados"
+          value={summary ? summary.by_interest?.interested ?? 0 : 0}
+          helper="by_interest.interested"
         />
-        <StatCard label="Top zonas" value={summary?.top_zonas.length ?? 0} helper="top_zonas" />
+        <StatCard
+          label="No interesados"
+          value={summary ? summary.by_interest?.not_interested ?? 0 : 0}
+          helper="by_interest.not_interested"
+        />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card title="Distribucion A/B/C" className="md:col-span-2">
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card title="Distribucion A/B/C">
           <div className="space-y-4">
             <div className="flex gap-3">
               {distributionList.map((item) => (
@@ -74,36 +78,10 @@ export const AnalyticsDashboard = () => {
           </div>
         </Card>
 
-        <Card title="Urgencias">
-          <div className="flex flex-wrap gap-2">
-            {summary
-              ? Object.entries(summary.urgency_counts).map(([label, value]) => (
-                  <Badge key={label} variant="info">
-                    {label}: {value}
-                  </Badge>
-                ))
-              : null}
-          </div>
-        </Card>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2">
-        <Card title="Tipos de propiedad">
-          <div className="flex flex-wrap gap-2">
-            {summary
-              ? Object.entries(summary.tipo_propiedad_counts).map(([label, value]) => (
-                  <Badge key={label} variant="neutral">
-                    {label}: {value}
-                  </Badge>
-                ))
-              : null}
-          </div>
-        </Card>
-
         <Card title="Canales">
           <div className="flex flex-wrap gap-2">
             {summary
-              ? Object.entries(summary.canal_counts).map(([label, value]) => (
+              ? Object.entries(summary.by_channel || {}).map(([label, value]) => (
                   <Badge key={label} variant="info">
                     {label}: {value}
                   </Badge>

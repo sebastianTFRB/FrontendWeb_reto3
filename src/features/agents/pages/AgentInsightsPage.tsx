@@ -4,6 +4,7 @@ import { Card } from '../../../shared/components/Card'
 import { Badge } from '../../../shared/components/Badge'
 import type { AnalyticsSummary, LeadAnalyzeResponse } from '../../../shared/types'
 import { api, ApiError } from '../../../shared/services/api'
+import { Link } from 'react-router-dom'
 
 export const AgentInsightsPage = () => {
   const [message, setMessage] = useState('')
@@ -95,7 +96,7 @@ export const AgentInsightsPage = () => {
               <div>
                 <p className="text-slate-400">Lead score</p>
                 <div className="flex gap-2">
-                  {Object.entries(analytics.lead_score_counts).map(([label, value]) => (
+                  {Object.entries(analytics.by_score || {}).map(([label, value]) => (
                     <Badge key={label} variant="info">
                       {label}: {value}
                     </Badge>
@@ -103,28 +104,21 @@ export const AgentInsightsPage = () => {
                 </div>
               </div>
               <div>
-                <p className="text-slate-400">Urgencias</p>
+                <p className="text-slate-400">Interés</p>
                 <div className="flex gap-2">
-                  {Object.entries(analytics.urgency_counts).map(([label, value]) => (
-                    <Badge key={label} variant="neutral">
+                  <Badge variant="success">interesados: {analytics.by_interest?.interested ?? 0}</Badge>
+                  <Badge variant="neutral">no interesados: {analytics.by_interest?.not_interested ?? 0}</Badge>
+                </div>
+              </div>
+              <div>
+                <p className="text-slate-400">Canales</p>
+                <div className="flex flex-wrap gap-2">
+                  {Object.entries(analytics.by_channel || {}).map(([label, value]) => (
+                    <Badge key={label} variant="info">
                       {label}: {value}
                     </Badge>
                   ))}
                 </div>
-              </div>
-              <div>
-                <p className="text-slate-400">Top zonas</p>
-                <ul className="list-disc space-y-1 pl-4">
-                  {analytics.top_zonas.map((item) => (
-                    <li key={item.zona}>
-                      {item.zona}: {item.count}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <p className="text-slate-400">Presupuesto promedio</p>
-                <p>{analytics.avg_presupuesto ?? 'N/A'}</p>
               </div>
             </div>
           ) : (
@@ -153,6 +147,34 @@ export const AgentInsightsPage = () => {
               <p>{result.razonamiento}</p>
             </div>
           </div>
+          {result.recommendations && result.recommendations.length > 0 ? (
+            <div className="mt-4 space-y-2">
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Recomendaciones</p>
+              <div className="grid gap-2 md:grid-cols-2">
+                {result.recommendations.map((rec) => (
+                  <div key={rec.id} className="rounded-xl border border-white/10 bg-white/5 p-3 text-xs text-slate-100">
+                    <div className="flex items-center justify-between">
+                      <p className="font-semibold">{rec.title ?? `Propiedad #${rec.id}`}</p>
+                      {rec.price != null ? <span className="text-indigo-200">${rec.price}</span> : null}
+                    </div>
+                    <p className="text-slate-400">{rec.location ?? 'Sin zona'}</p>
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {rec.bedrooms != null ? <Badge variant="neutral">{rec.bedrooms} hab</Badge> : null}
+                      {rec.bathrooms != null ? <Badge variant="neutral">{rec.bathrooms} baños</Badge> : null}
+                    </div>
+                    {rec.id ? (
+                      <Link
+                        to={`/app/properties/${rec.id}`}
+                        className="mt-2 inline-flex rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-white hover:bg-white/20"
+                      >
+                        Ver detalle
+                      </Link>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
         </Card>
       ) : null}
     </div>

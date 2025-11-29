@@ -151,6 +151,33 @@ export const LeadDetailPage = () => {
               <p>{formatDate(lead.updated_at)}</p>
             </div>
           </div>
+          {lead.preferences ? (
+            <div className="mt-3 space-y-1 rounded-xl border border-white/10 bg-white/5 p-3">
+              <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Preferencias del chat</p>
+              <div className="flex flex-wrap gap-2 text-xs text-slate-100">
+                {lead.preferences.tipo_propiedad ? (
+                  <span className="rounded-full bg-white/10 px-2 py-1">{lead.preferences.tipo_propiedad}</span>
+                ) : null}
+                {lead.preferences.habitaciones ? (
+                  <span className="rounded-full bg-white/10 px-2 py-1">{lead.preferences.habitaciones} hab</span>
+                ) : null}
+                {lead.preferences.banos ? (
+                  <span className="rounded-full bg-white/10 px-2 py-1">{lead.preferences.banos} baños</span>
+                ) : null}
+                {lead.preferences.garaje != null ? (
+                  <span className="rounded-full bg-white/10 px-2 py-1">
+                    {lead.preferences.garaje ? 'Quiere garaje' : 'No requiere garaje'}
+                  </span>
+                ) : null}
+                {lead.preferences.property_id ? (
+                  <span className="rounded-full bg-white/10 px-2 py-1">Property #{lead.preferences.property_id}</span>
+                ) : null}
+                {lead.preferences.property_title ? (
+                  <span className="rounded-full bg-white/10 px-2 py-1">{lead.preferences.property_title}</span>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
         </Card>
 
         <Card title="Interacciones">

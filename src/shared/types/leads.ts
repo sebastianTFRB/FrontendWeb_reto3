@@ -22,6 +22,7 @@ export type Lead = {
   notes?: string | null
   status: string
   category: LeadCategory
+  preferences?: Record<string, any> | null
   intent_score: number
   agency_id?: number | null
   created_at: string

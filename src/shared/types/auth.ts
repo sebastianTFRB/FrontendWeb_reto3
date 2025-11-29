@@ -3,6 +3,7 @@ export type User = {
   email: string
   full_name?: string | null
   agency_id?: number | null
+  role?: string | null
   is_active: boolean
   is_superuser: boolean
 }
@@ -10,4 +11,7 @@ export type User = {
 export type TokenResponse = {
   access_token: string
   token_type: string
+  user_id?: number
+  role?: string
+  agency_id?: number | null
 }

@@ -9,6 +9,7 @@ import { useAuth } from '../../../shared/hooks/useAuth'
 
 export const LeadsPage = () => {
   const { token, user } = useAuth()
+  const isAgency = user?.role === 'agency_admin' || user?.role === 'superadmin'
   const [leads, setLeads] = useState<Lead[]>([])
   const [filter, setFilter] = useState<'all' | 'A' | 'B' | 'C'>('all')
   const [loading, setLoading] = useState<boolean>(true)
@@ -44,6 +45,10 @@ export const LeadsPage = () => {
 
   const handleCreateLead = async (payload: LeadCreatePayload) => {
     if (!token) return
+    if (!isAgency) {
+      setError('Solo las agencias pueden registrar leads')
+      return
+    }
     if (!user?.agency_id) {
       setError('El usuario necesita agency_id para crear leads')
       return
@@ -63,6 +68,11 @@ export const LeadsPage = () => {
 
   return (
     <div className="space-y-5">
+      {!isAgency ? (
+        <p className="rounded-xl border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-50">
+          Este módulo es solo para agencias. Usa el chat para compartir tus preferencias.
+        </p>
+      ) : null}
       <PageHeader
         title="Leads"
         subtitle="Captura, clasifica y prioriza directamente contra el backend."

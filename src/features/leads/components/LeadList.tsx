@@ -39,6 +39,24 @@ export const LeadList = ({ leads }: LeadListProps) => {
             <span className="rounded-lg bg-white/5 px-2 py-1">Urgencia: {formatUrgency(lead.urgency)}</span>
             <span className="rounded-lg bg-white/5 px-2 py-1">Estado: {lead.status}</span>
           </div>
+          {lead.preferences ? (
+            <div className="flex flex-wrap gap-2 text-xs text-slate-200">
+              {lead.preferences.tipo_propiedad ? (
+                <span className="rounded-full bg-white/5 px-2 py-1">{lead.preferences.tipo_propiedad}</span>
+              ) : null}
+              {lead.preferences.habitaciones ? (
+                <span className="rounded-full bg-white/5 px-2 py-1">{lead.preferences.habitaciones} hab</span>
+              ) : null}
+              {lead.preferences.banos ? (
+                <span className="rounded-full bg-white/5 px-2 py-1">{lead.preferences.banos} baños</span>
+              ) : null}
+              {lead.preferences.garaje != null ? (
+                <span className="rounded-full bg-white/5 px-2 py-1">
+                  {lead.preferences.garaje ? 'Quiere garaje' : 'Sin garaje'}
+                </span>
+              ) : null}
+            </div>
+          ) : null}
           <p className="text-sm text-slate-200">
             {lead.email ?? 'Sin email'} · {lead.phone ?? 'Sin telefono'}
           </p>

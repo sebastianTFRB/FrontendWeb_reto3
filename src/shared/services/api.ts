@@ -10,9 +10,11 @@ import type {
   PropertyUpdatePayload,
   TokenResponse,
   User,
+  ChatPreferencePayload,
+  ChatPreferenceResponse,
 } from '../types'
 
-const RAW_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const RAW_BASE_URL = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:8000'
 const API_BASE = RAW_BASE_URL.replace(/\/$/, '')
 
 export class ApiError extends Error {
@@ -86,17 +88,63 @@ export const api = {
   addInteraction: (id: number, payload: { channel?: string; direction?: string; message: string }, token: string) =>
     request(`/api/leads/${id}/interactions`, { method: 'POST', body: payload }, token),
 
-  listProperties: (token: string) => request<Property[]>('/api/properties', { method: 'GET' }, token),
-  createProperty: (payload: PropertyCreatePayload, token: string) =>
-    request<Property>('/api/properties', { method: 'POST', body: payload }, token),
+  listProperties: (
+    token: string,
+    filters: {
+      location?: string
+      property_type?: string
+      min_price?: number | null
+      max_price?: number | null
+      bedrooms?: number | null
+      bathrooms?: number | null
+      parking?: boolean | null
+    } = {}
+  ) => {
+    const params = new URLSearchParams()
+    if (filters.location) params.set('location', filters.location)
+    if (filters.property_type) params.set('property_type', filters.property_type)
+    if (filters.min_price != null) params.set('min_price', String(filters.min_price))
+    if (filters.max_price != null) params.set('max_price', String(filters.max_price))
+    if (filters.bedrooms != null) params.set('bedrooms', String(filters.bedrooms))
+    if (filters.bathrooms != null) params.set('bathrooms', String(filters.bathrooms))
+    if (filters.parking != null) params.set('parking', String(filters.parking))
+    const query = params.toString()
+    const path = `/api/properties${query ? `?${query}` : ''}`
+    return request<Property[]>(path, { method: 'GET' }, token)
+  },
+  getProperty: (id: number, token: string) => request<Property>(`/api/properties/${id}`, { method: 'GET' }, token),
+  createProperty: (payload: PropertyCreatePayload, token: string) => {
+    if ((payload as any).photos && Array.isArray((payload as any).photos) && (payload as any).photos.length > 0) {
+      const formData = new FormData()
+      formData.append('title', payload.title)
+      formData.append('price', String(payload.price))
+      if (payload.description) formData.append('description', payload.description)
+      if (payload.area) formData.append('area', payload.area)
+      if (payload.location) formData.append('location', payload.location)
+      if (payload.property_type) formData.append('property_type', payload.property_type)
+      if (payload.bedrooms != null) formData.append('bedrooms', String(payload.bedrooms))
+      if (payload.bathrooms != null) formData.append('bathrooms', String(payload.bathrooms))
+      if (payload.parking != null) formData.append('parking', String(payload.parking))
+      if (payload.status) formData.append('status', payload.status)
+      if (payload.agency_id) formData.append('agency_id', String(payload.agency_id))
+      ;(payload as any).photos.forEach((file: File) => {
+        formData.append('photos', file)
+      })
+      return request<Property>('/api/properties/with-media', { method: 'POST', body: formData }, token)
+    }
+    const { photos, ...rest } = payload as any
+    return request<Property>('/api/properties', { method: 'POST', body: rest }, token)
+  },
   updateProperty: (id: number, payload: PropertyUpdatePayload, token: string) =>
     request<Property>(`/api/properties/${id}`, { method: 'PUT', body: payload }, token),
   deleteProperty: (id: number, token: string) =>
     request<void>(`/api/properties/${id}`, { method: 'DELETE' }, token),
 
   analyzeLead: (payload: LeadAnalyzeRequest) =>
-    request<LeadAnalyzeResponse>('/api/lead/analyze', { method: 'POST', body: payload }),
+    request<LeadAnalyzeResponse>('/api/agent/analyze', { method: 'POST', body: payload }),
   analytics: () => request<AnalyticsSummary>('/api/analytics/summary', { method: 'GET' }),
+  saveChatPreferences: (payload: ChatPreferencePayload, token?: string) =>
+    request<ChatPreferenceResponse>('/api/chat/preferences', { method: 'POST', body: payload }, token),
 }
 
 export { API_BASE }
