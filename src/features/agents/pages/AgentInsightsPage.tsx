@@ -52,7 +52,6 @@ export const AgentInsightsPage = () => {
     <div className="space-y-5">
       <PageHeader
         title="Agente inteligente"
-        subtitle="Conecta directo con /api/chatbot y /api/analytics/summary."
       />
 
       <div className="grid gap-4 lg:grid-cols-3">
@@ -97,7 +96,7 @@ export const AgentInsightsPage = () => {
           </div>
         </Card>
 
-        {/* Analytics igual que antes */}
+
         <Card title="Analytics en vivo">
           {analytics ? (
             <div className="space-y-2 text-sm text-slate-200">

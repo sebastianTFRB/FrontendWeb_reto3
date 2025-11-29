@@ -44,11 +44,9 @@ export const PropertiesPage = () => {
 
   const isAgency = user?.role === 'agency_admin' || user?.role === 'superadmin'
 
-  // Cargar propiedades con filtros
   useEffect(() => {
     if (!token) return
 
-    // Validación local
     if (
       filters.minPrice !== null &&
       filters.maxPrice !== null &&
@@ -88,7 +86,6 @@ export const PropertiesPage = () => {
     filters.parking,
   ])
 
-  // Filtrar por estado
   const filtered = useMemo(() => {
     return properties.filter((property) => {
       if (statusFilter === 'todas') return true
@@ -98,7 +95,6 @@ export const PropertiesPage = () => {
     })
   }, [properties, statusFilter])
 
-  // Estadísticas
   const stats = useMemo(() => {
     const avg =
       filtered.length === 0
@@ -115,7 +111,6 @@ export const PropertiesPage = () => {
     }
   }, [filtered])
 
-  // Crear propiedad
   const handleCreateProperty = async (event: React.FormEvent) => {
     event.preventDefault()
     if (!token) return
@@ -213,50 +208,49 @@ export const PropertiesPage = () => {
         </p>
       )}
 
-      <div className="grid gap-4 lg:grid-cols-3">
-
-        <div className="rounded-2xl border border-white/10 bg-black/40 p-4 backdrop-blur lg:col-span-2">
+      {/* AQUÍ ES DONDE CAMBIA: lg:grid-cols-2 */}
+      <div className="grid gap-4 lg:grid-cols-2">
+        {/* FILTRO EN VIVO */}
+        <div className="rounded-2xl border border-white/10 bg-black/40 p-4 backdrop-blur">
           <p className="text-sm font-semibold text-white">Filtrado en vivo</p>
 
+          <div className="mt-3 space-y-3">
+            <div className="grid gap-3 md:grid-cols-2">
+              <input
+                placeholder="Zona / ciudad"
+                value={filters.location}
+                onChange={(e) => setFilters((p) => ({ ...p, location: e.target.value }))}
+                className="rounded-xl border border-white/10 bg-black/60 px-3 py-2 text-sm text-white placeholder:text-slate-400 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+              />
 
-          <div className="mt-3 grid gap-3 md:grid-cols-3">
-
-            <input
-              placeholder="Zona / ciudad"
-              value={filters.location}
-              onChange={(e) => setFilters((p) => ({ ...p, location: e.target.value }))}
-              className="rounded-xl border border-white/10 bg-black/60 px-3 py-2 text-sm text-white placeholder:text-slate-400 outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
-            />
-
-
-            <select
-              value={filters.property_type}
-              onChange={(e) => setFilters((p) => ({ ...p, property_type: e.target.value }))}
-              className="rounded-xl border border-white/10 bg-black/60 px-3 py-2 text-sm text-white appearance-none outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
-            >
-              <option className="bg-black text-white" value="">
-                Tipo (todos)
-              </option>
-              <option className="bg-black text-white" value="apartamento">
-                Apartamento
-              </option>
-              <option className="bg-black text-white" value="casa">
-                Casa
-              </option>
-              <option className="bg-black text-white" value="local">
-                Local
-              </option>
-              <option className="bg-black text-white" value="oficina">
-                Oficina
-              </option>
-              <option className="bg-black text-white" value="lote">
-                Lote
-              </option>
-              <option className="bg-black text-white" value="finca">
-                Finca
-              </option>
-            </select>
-
+              <select
+                value={filters.property_type}
+                onChange={(e) => setFilters((p) => ({ ...p, property_type: e.target.value }))}
+                className="rounded-xl border border-white/10 bg-black/60 px-3 py-2 text-sm text-white appearance-none outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+              >
+                <option className="bg-black text-white" value="">
+                  Tipo (todos)
+                </option>
+                <option className="bg-black text-white" value="apartamento">
+                  Apartamento
+                </option>
+                <option className="bg-black text-white" value="casa">
+                  Casa
+                </option>
+                <option className="bg-black text-white" value="local">
+                  Local
+                </option>
+                <option className="bg-black text-white" value="oficina">
+                  Oficina
+                </option>
+                <option className="bg-black text-white" value="lote">
+                  Lote
+                </option>
+                <option className="bg-black text-white" value="finca">
+                  Finca
+                </option>
+              </select>
+            </div>
 
             <label className="flex items-center gap-2 rounded-xl border border-white/10 bg-black/60 px-3 py-2 text-sm text-white">
               <input
@@ -268,77 +262,74 @@ export const PropertiesPage = () => {
               />
               Solo con garaje
             </label>
-          </div>
 
+            <div className="grid gap-3 md:grid-cols-2">
+              <input
+                type="number"
+                min={0}
+                max={1000000000}
+                placeholder="Min $"
+                value={filters.minPrice ?? ''}
+                onChange={(e) => {
+                  const v = e.target.value
+                  if (!v) return setFilters((p) => ({ ...p, minPrice: null }))
+                  const n = Math.min(Math.max(Number(v), 0), 1000000000)
+                  setFilters((p) => ({ ...p, minPrice: n }))
+                }}
+                className="rounded-xl border border-white/10 bg-black/60 px-3 py-2 text-sm text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+              />
 
-          <div className="mt-3 grid gap-3 md:grid-cols-4">
+              <input
+                type="number"
+                min={0}
+                max={1000000000}
+                placeholder="Max $"
+                value={filters.maxPrice ?? ''}
+                onChange={(e) => {
+                  const v = e.target.value
+                  if (!v) return setFilters((p) => ({ ...p, maxPrice: null }))
+                  const n = Math.min(Math.max(Number(v), 0), 1000000000)
+                  setFilters((p) => ({ ...p, maxPrice: n }))
+                }}
+                className="rounded-xl border border-white/10 bg-black/60 px-3 py-2 text-sm text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+              />
+            </div>
 
-            <input
-              type="number"
-              min={0}
-              max={1000000000}
-              placeholder="Min $"
-              value={filters.minPrice ?? ''}
-              onChange={(e) => {
-                const v = e.target.value
-                if (!v) return setFilters((p) => ({ ...p, minPrice: null }))
-                const n = Math.min(Math.max(Number(v), 0), 1000000000)
-                setFilters((p) => ({ ...p, minPrice: n }))
-              }}
-              className="rounded-xl border border-white/10 bg-black/60 px-3 py-2 text-sm text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
-            />
+            <div className="grid gap-3 md:grid-cols-2">
+              <input
+                type="number"
+                min={0}
+                max={10}
+                placeholder="Habitaciones"
+                value={filters.bedrooms ?? ''}
+                onChange={(e) => {
+                  const v = e.target.value
+                  if (!v) return setFilters((p) => ({ ...p, bedrooms: null }))
+                  const n = Math.min(Math.max(Number(v), 0), 10)
+                  setFilters((p) => ({ ...p, bedrooms: n }))
+                }}
+                className="rounded-xl border border-white/10 bg-black/60 px-3 py-2 text-sm text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+              />
 
-
-            <input
-              type="number"
-              min={0}
-              max={1000000000}
-              placeholder="Max $"
-              value={filters.maxPrice ?? ''}
-              onChange={(e) => {
-                const v = e.target.value
-                if (!v) return setFilters((p) => ({ ...p, maxPrice: null }))
-                const n = Math.min(Math.max(Number(v), 0), 1000000000)
-                setFilters((p) => ({ ...p, maxPrice: n }))
-              }}
-              className="rounded-xl border border-white/10 bg-black/60 px-3 py-2 text-sm text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
-            />
-
-
-            <input
-              type="number"
-              min={0}
-              max={10}
-              placeholder="Habitaciones"
-              value={filters.bedrooms ?? ''}
-              onChange={(e) => {
-                const v = e.target.value
-                if (!v) return setFilters((p) => ({ ...p, bedrooms: null }))
-                const n = Math.min(Math.max(Number(v), 0), 10)
-                setFilters((p) => ({ ...p, bedrooms: n }))
-              }}
-              className="rounded-xl border border-white/10 bg-black/60 px-3 py-2 text-sm text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
-            />
-
-
-            <input
-              type="number"
-              min={0}
-              max={8}
-              placeholder="Baños"
-              value={filters.bathrooms ?? ''}
-              onChange={(e) => {
-                const v = e.target.value
-                if (!v) return setFilters((p) => ({ ...p, bathrooms: null }))
-                const n = Math.min(Math.max(Number(v), 0), 8)
-                setFilters((p) => ({ ...p, bathrooms: n }))
-              }}
-              className="rounded-xl border border-white/10 bg-black/60 px-3 py-2 text-sm text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
-            />
+              <input
+                type="number"
+                min={0}
+                max={8}
+                placeholder="Baños"
+                value={filters.bathrooms ?? ''}
+                onChange={(e) => {
+                  const v = e.target.value
+                  if (!v) return setFilters((p) => ({ ...p, bathrooms: null }))
+                  const n = Math.min(Math.max(Number(v), 0), 8)
+                  setFilters((p) => ({ ...p, bathrooms: n }))
+                }}
+                className="rounded-xl border border-white/10 bg-black/60 px-3 py-2 text-sm text-white outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500"
+              />
+            </div>
           </div>
         </div>
 
-
+        
         {isAgency ? (
           <form
             onSubmit={handleCreateProperty}
@@ -491,7 +482,7 @@ export const PropertiesPage = () => {
         )}
       </div>
 
-      {/* LISTADO */}
+ 
       {loading ? (
         <p className="text-sm text-slate-300">Cargando propiedades...</p>
       ) : (

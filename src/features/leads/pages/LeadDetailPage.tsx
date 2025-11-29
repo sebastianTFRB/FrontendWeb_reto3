@@ -170,7 +170,7 @@ export const LeadDetailPage = () => {
             </div>
           </div>
 
-          {/* Aquí estaba la tabla / bloque de "Captura inteligente" (lead.preferences) y ya la eliminé */}
+
         </Card>
       </div>
     </div>

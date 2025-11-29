@@ -83,13 +83,13 @@ export const PropertyDetailPage = () => {
       />
 
       <div className="grid gap-5 lg:grid-cols-3">
-        {/* GALERÍA */}
+   
         <Card className="lg:col-span-2" title="Galería">
           {photos.length > 0 ? (
             <div className="space-y-4">
-              {/* Imagen principal */}
+
               <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-slate-900/60">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
+             
                 <img
                   src={photos[0]}
                   alt={property.title}
@@ -98,7 +98,7 @@ export const PropertyDetailPage = () => {
                 <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-white/10" />
               </div>
 
-              {/* Thumbnails */}
+             
               {photos.length > 1 && (
                 <div className="grid grid-cols-3 gap-2 md:grid-cols-4">
                   {photos.slice(1).map((url, idx) => (
@@ -123,7 +123,7 @@ export const PropertyDetailPage = () => {
           )}
         </Card>
 
-        {/* DETALLES */}
+        
         <Card title="Detalles">
           <div className="space-y-4 text-sm text-slate-200">
             <div className="space-y-1">
